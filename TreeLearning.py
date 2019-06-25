@@ -155,6 +155,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import mahotas
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.neighbors import KNeighborsClassifier
 
 #X = []
 #N=3
@@ -229,12 +230,12 @@ from sklearn.svm import LinearSVC
 
 # function to extract haralick textures from an image
 def extract_features(image):
-	# calculate haralick texture features for 4 types of adjacency
-	textures = mt.features.haralick(image)
+    # calculate haralick texture features for 4 types of adjacency
+    textures = mt.features.haralick(image)
 
-	## take the mean of it and return it
-	ht_mean  = textures.mean(axis=0)
-	return ht_mean
+    ## take the mean of it and return it
+    #ht_mean  = textures.mean(axis=0)
+    #return ht_mean
 
     #color = ('b','g','r')
 
@@ -243,8 +244,8 @@ def extract_features(image):
     #    histr = cv2.calcHist([image],[1],None,[256],[0,256])
     #    #plt.plot(histr,color = col)
     #    #plt.xlim([0,256])
-    #hist,bins = np.histogram(image.ravel(),256,[0,256])
-    #return hist
+    hist,bins = np.histogram(image.ravel(),256,[0,256])
+    return hist
 
 # load the training dataset
 train_path  = "train/"
@@ -275,6 +276,7 @@ for train_name in train_names:
 
                 # append the feature vector and label
                 train_features.append(features)
+                #print features
                 train_labels.append(cur_label)
 
                 # show loop update
@@ -283,16 +285,19 @@ for train_name in train_names:
 print "Training features: {}".format(np.array(train_features).shape)
 print "Training labels: {}".format(np.array(train_labels).shape)
 
+
 # create the classifier
 print "[STATUS] Creating the classifier.."
-clf_svm = LinearSVC(random_state=20)
+#clf_svm = LinearSVC(random_state=20)
 model = LinearDiscriminantAnalysis()
-    
+modelN= KNeighborsClassifier(2)
+print train_features[0]
 
 # fit the training data and labels
 print "[STATUS] Fitting data/label to model.."
-clf_svm.fit(train_features, train_labels)
-model.fit(train_features, train_labels)
+#clf_svm.fit(train_features, train_labels)
+lda=model.fit(train_features, train_labels).transform(train_features)
+modelN.fit(train_features, train_labels)
 
 # loop over the test images
 test_path = "dataset/"
@@ -307,7 +312,7 @@ for file in glob.glob(test_path + "/*.jpeg"):
 	features = extract_features(gray)
 
 	# evaluate the model and predict label
-	prediction = model.predict(features.reshape(1, -1))[0]
+	prediction = modelN.predict(features.reshape(1, -1))[0]
 
 	# show the label
 	cv2.putText(image, prediction, (20,30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0,255,255), 3)
