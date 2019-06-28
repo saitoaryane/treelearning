@@ -257,7 +257,7 @@ train_features = []
 train_labels   = []
 
 # loop over the training dataset
-print "[STATUS] Started extracting haralick textures.."
+print "[STATUS] Started extracting features.."
 for train_name in train_names:
         cur_path = train_path + "/" + train_name
         cur_label = train_name
@@ -289,35 +289,37 @@ print "Training labels: {}".format(np.array(train_labels).shape)
 # create the classifier
 print "[STATUS] Creating the classifier.."
 #clf_svm = LinearSVC(random_state=20)
-model = LinearDiscriminantAnalysis()
-modelN= KNeighborsClassifier(2)
+lda = LinearDiscriminantAnalysis(n_components=2)
+train_features_lda = lda.fit_transform(train_features, train_labels)
+modelN= KNeighborsClassifier()
 print train_features[0]
 
 # fit the training data and labels
 print "[STATUS] Fitting data/label to model.."
 #clf_svm.fit(train_features, train_labels)
-lda=model.fit(train_features, train_labels).transform(train_features)
-modelN.fit(train_features, train_labels)
+#lda=model.fit(train_features, train_labels).transform(train_features)
+modelN.fit(train_features_lda, train_labels)
 
 # loop over the test images
 test_path = "dataset/"
 for file in glob.glob(test_path + "/*.jpeg"):
-	# read the input image
-	image = cv2.imread(file)
+    # read the input image
+    image = cv2.imread(file)
 
-	# convert to grayscale
-	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-	# extract haralick texture from the image
-	features = extract_features(gray)
+    # convert to grayscale
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # extract haralick texture from the image
+    features = extract_features(gray)
+    features_lda = lda.transform(features)
+    #lda2=model.fit(features, train_labels).transform(features)
 
 	# evaluate the model and predict label
-	prediction = modelN.predict(features.reshape(1, -1))[0]
+    prediction = modelN.predict(features_lda.reshape(1, -1))[0]
 
 	# show the label
-	cv2.putText(image, prediction, (20,30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0,255,255), 3)
-	print "Prediction - {}".format(prediction)
+    cv2.putText(image, prediction, (20,30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0,255,255), 3)
+    print "Prediction - {}".format(prediction)
 
 	# display the output image
-	cv2.imshow("Test_Image", image)
-	cv2.waitKey(0)     
+    cv2.imshow("Test_Image", image)
+    cv2.waitKey(0)     
