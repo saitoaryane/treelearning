@@ -231,24 +231,26 @@ from sklearn.svm import LinearSVC
 # function to extract haralick textures from an image
 def extract_features(image):
     # calculate haralick texture features for 4 types of adjacency
-    textures = mt.features.haralick(image)
+    #textures = mt.features.haralick(image)
 
     ## take the mean of it and return it
     #ht_mean  = textures.mean(axis=0)
     #return ht_mean
 
-    #color = ('b','g','r')
+    color = ('b','g','r')
 
-    #cv2.imshow('image', imagem)
-    #for i,col in enumerate(color):
-    #    histr = cv2.calcHist([image],[1],None,[256],[0,256])
-    #    #plt.plot(histr,color = col)
-    #    #plt.xlim([0,256])
-    hist,bins = np.histogram(image.ravel(),256,[0,256])
+    #cv2.imshow('image', image)
+    for i,col in enumerate(color):
+        histr = cv2.calcHist([image],[1],None,[256],[0,256])
+                
+    #    plt.plot(histr,color = col)
+    #    plt.xlim([0,256])
+        hist= np.concatenate(histr)
+
     return hist
 
 # load the training dataset
-train_path  = "train/"
+train_path  = "./Fotos/Fotos/Dataset2/train/"
 train_names = os.listdir(train_path)
 print train_names
 
@@ -267,11 +269,13 @@ for train_name in train_names:
                 # read the training image
                 image = cv2.imread(file)
 
+               
+
                 # convert the image to grayscale
-                gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+                #gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
                 # extract haralick texture from the image
-                features = extract_features(gray)
+                features = extract_features(image)
                 #print features
 
                 # append the feature vector and label
@@ -289,32 +293,32 @@ print "Training labels: {}".format(np.array(train_labels).shape)
 # create the classifier
 print "[STATUS] Creating the classifier.."
 #clf_svm = LinearSVC(random_state=20)
-lda = LinearDiscriminantAnalysis(n_components=2)
-train_features_lda = lda.fit_transform(train_features, train_labels)
+#lda = LinearDiscriminantAnalysis(n_components=4)
+#train_features_lda = lda.fit_transform(train_features, train_labels)
 modelN= KNeighborsClassifier()
-print train_features[0]
+#print train_features[0]
 
 # fit the training data and labels
 print "[STATUS] Fitting data/label to model.."
 #clf_svm.fit(train_features, train_labels)
 #lda=model.fit(train_features, train_labels).transform(train_features)
-modelN.fit(train_features_lda, train_labels)
+modelN.fit(train_features, train_labels)
 
 # loop over the test images
-test_path = "dataset/"
-for file in glob.glob(test_path + "/*.jpeg"):
+
+for file in glob.glob("./Fotos/Fotos/Dataset2/*.jpeg"):
     # read the input image
     image = cv2.imread(file)
 
     # convert to grayscale
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    #gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # extract haralick texture from the image
-    features = extract_features(gray)
-    features_lda = lda.transform(features)
+    features = extract_features(image)
+    #features_lda = lda.transform(features.reshape(1,-1))[0]
     #lda2=model.fit(features, train_labels).transform(features)
 
 	# evaluate the model and predict label
-    prediction = modelN.predict(features_lda.reshape(1, -1))[0]
+    prediction = modelN.predict(features.reshape(1, -1))[0]
 
 	# show the label
     cv2.putText(image, prediction, (20,30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0,255,255), 3)
