@@ -241,13 +241,13 @@ def extract_features(image):
 
     #cv2.imshow('image', image)
     for i,col in enumerate(color):
-        histr = cv2.calcHist([image],[1],None,[256],[0,256])
+        histr = cv2.calcHist([image],[0],None,[256],[0,256])
                 
     #    plt.plot(histr,color = col)
     #    plt.xlim([0,256])
         hist= np.concatenate(histr)
 
-    return hist
+    return histr
 
 # load the training dataset
 train_path  = "./Fotos/Fotos/Dataset2/train/"
