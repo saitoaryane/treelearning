@@ -273,10 +273,10 @@ for train_name in train_names:
                
 
                 # convert the image to grayscale
-                #gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+                gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
                 # extract haralick texture from the image
-                features = extract_features(image)
+                features = extract_features(gray)
                 #print features
 
                 # append the feature vector and label
@@ -312,9 +312,9 @@ for file in glob.glob("./Fotos/Fotos/Dataset2/*.jpeg"):
     image = cv2.imread(file)
 
     # convert to grayscale
-    #gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # extract haralick texture from the image
-    features = extract_features(image)
+    features = extract_features(gray)
     #features_lda = lda.transform(features.reshape(1,-1))[0]
     #lda2=model.fit(features, train_labels).transform(features)
 
