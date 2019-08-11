@@ -240,14 +240,15 @@ def extract_features(image):
     color = ('b','g','r')
 
     #cv2.imshow('image', image)
-    for i,col in enumerate(color):
-        histr = cv2.calcHist([image],[0],None,[256],[0,256])
+    #for i,col in enumerate(color):
+       # histr = cv2.calcHist([image],[0],None,[256],[0,256])
                 
     #    plt.plot(histr,color = col)
     #    plt.xlim([0,256])
-        hist= np.concatenate(histr)
+    hist,bins = np.histogram(image.ravel(),256,[0,256])
+        #hist= np.concatenate(histr)
 
-    return histr
+    return hist
 
 # load the training dataset
 train_path  = "./Fotos/Fotos/Dataset2/train/"
@@ -303,7 +304,7 @@ print "[STATUS] Fitting data/label to model.."
 #clf_svm.fit(train_features, train_labels)
 #lda=model.fit(train_features, train_labels).transform(train_features)
 modelN.fit(train_features, train_labels)
-
+predict= []
 # loop over the test images
 
 for file in glob.glob("./Fotos/Fotos/Dataset2/*.jpeg"):
@@ -323,7 +324,9 @@ for file in glob.glob("./Fotos/Fotos/Dataset2/*.jpeg"):
 	# show the label
     cv2.putText(image, prediction, (20,30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0,255,255), 3)
     print "Prediction - {}".format(prediction)
+    predict.append(prediction)
 
 	# display the output image
-    cv2.imshow("Test_Image", image)
-    cv2.waitKey(0)     
+    #cv2.imshow("Test_Image", image)
+    #cv2.waitKey(0)    
+print predict
