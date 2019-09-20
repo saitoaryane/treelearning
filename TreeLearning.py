@@ -24,14 +24,14 @@ def extract_features(image):
 # load the training dataset
 train_path  = "./Fotos/Fotos/Dataset2/train/"
 train_names = os.listdir(train_path)
-print train_names
+print (train_names)
 
 # empty list to hold feature vectors and train labels
 train_features = []
 train_labels   = []
 
 # loop over the training dataset
-print "[STATUS] Started extracting features.."
+print ("[STATUS] Started extracting features..")
 for train_name in train_names:
         cur_path = train_path + "/" + train_name
         cur_label = train_name
@@ -54,16 +54,16 @@ for train_name in train_names:
                 # show loop update
                 i += 1
 # have a look at the size of our feature vector and labels
-print "Training features: {}".format(np.array(train_features).shape)
-print "Training labels: {}".format(np.array(train_labels).shape)
+print ("Training features: {}".format(np.array(train_features).shape))
+print ("Training labels: {}".format(np.array(train_labels).shape))
 
 
 # create the classifier
-print "[STATUS] Creating the classifier.."
+print ("[STATUS] Creating the classifier..")
 modelN= KNeighborsClassifier()
 
 # fit the training data and labels
-print "[STATUS] Fitting data/label to model.."
+print ("[STATUS] Fitting data/label to model..")
 modelN.fit(train_features, train_labels)
 predict= []
 # loop over the test images
@@ -79,8 +79,8 @@ for file in glob.glob("./Fotos/Fotos/Dataset2/*.jpeg"):
 
 	# show the label
     cv2.putText(image, prediction, (20,30), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0,255,255), 3)
-    print "Prediction - {}".format(prediction)
+    print ("Prediction - {}".format(prediction))
     predict.append(prediction)
 
 	 
-print predict
+print (predict)
